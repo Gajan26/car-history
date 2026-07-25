@@ -17,7 +17,7 @@ export default function App() {
 
   // Dynamic favicon & tab title setup
   useEffect(() => {
-    document.title = "Car History - Official MOT Analysis";
+    document.title = "Car Quality Check - Official MOT Analysis";
 
     // Inject Yellow Shield Favicon dynamically
     const svgIcon = `
@@ -586,7 +586,7 @@ export default function App() {
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl font-extrabold mb-2 flex items-center justify-center gap-2 tracking-tight text-white">
             <Shield className="w-9 h-9 text-yellow-400 fill-yellow-400/20" />
-            Car History
+            Car Quality Check
           </h1>
           <p className="text-slate-400 mb-8 text-sm md:text-base">Official Vehicle MOT Analysis and History Check</p>
 
@@ -644,7 +644,7 @@ export default function App() {
 
           {!analysis && (
             <div className="mt-12 max-w-4xl mx-auto">
-              <h2 className="text-2xl font-bold text-white mb-8 text-center">Why Use Car History?</h2>
+              <h2 className="text-2xl font-bold text-white mb-8 text-center">Why Use Car Quality Check?</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                 <div className="bg-slate-800/40 border border-slate-700/60 rounded-xl p-6">
