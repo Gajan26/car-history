@@ -159,21 +159,20 @@ export default function App() {
 
     let lookbackWindowSize = 2; // Default lookback window size
 
-    // First cycle check: Latest is PASS, previous is FAIL (T_0 and T_1)
-    const firstCycleFailFix = tests[0] && tests[0].testResult === 'PASSED' && tests[1] && tests[1].testResult === 'FAILED';
-    if (firstCycleFailFix) {
-      lookbackWindowSize = 5;
-    }
+    // Find the most recent FAILED test (if any)
+    const mostRecentFailedIndex = tests.findIndex(t => t.testResult === 'FAILED');
 
-    // Second cycle check: If further back (e.g., T_2 is PASS and T_3 is FAIL)
-    const secondCycleFailFix = tests[2] && tests[2].testResult === 'PASSED' && tests[3] && tests[3].testResult === 'FAILED';
-    if (firstCycleFailFix && secondCycleFailFix) {
-      lookbackWindowSize = 7;
+    // If there's a FAILED test, expand lookback to include it
+    if (mostRecentFailedIndex >= 0 && mostRecentFailedIndex > 1) {
+      lookbackWindowSize = Math.max(lookbackWindowSize, mostRecentFailedIndex + 1);
+    } else if (mostRecentFailedIndex === 1) {
+      // First cycle check: Latest is PASS, previous is FAIL
+      lookbackWindowSize = 5;
     }
 
     // Restrict active evaluation to the calculated lookback window
     const activeTests = tests.slice(0, lookbackWindowSize);
-    console.log(`DEBUG: firstCycleFailFix=${firstCycleFailFix}, lookbackWindowSize=${lookbackWindowSize}, activeTests count=${activeTests.length}`);
+    console.log(`DEBUG: mostRecentFailedIndex=${mostRecentFailedIndex}, lookbackWindowSize=${lookbackWindowSize}, activeTests count=${activeTests.length}`);
 
     // Mileage anomaly tracking
     let hasRollback = false;
