@@ -3,6 +3,9 @@
 .env.local
 .env.*.local
 
+# Project documentation (not for GitHub)
+CLAUDE.md
+
 # Dependencies
 node_modules
 

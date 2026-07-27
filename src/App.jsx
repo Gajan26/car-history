@@ -2,6 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Search, AlertTriangle, Clock, Cog, Info, Shield, Wrench, ChevronDown, ChevronUp, CalendarRange, ShieldCheck, Check, XCircle, TrendingUp, CheckCircle } from 'lucide-react';
 import { getMockData } from './mockData.js';
 
+// Format ISO date to DD-MMM-YYYY (e.g., 10-FEB-2025)
+const formatDate = (isoDate) => {
+  const date = new Date(isoDate);
+  const day = String(date.getUTCDate()).padStart(2, '0');
+  const monthNames = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+  const month = monthNames[date.getUTCMonth()];
+  const year = date.getUTCFullYear();
+  return `${day}-${month}-${year}`;
+};
+
 export default function App() {
   const [registration, setRegistration] = useState('');
   const [loading, setLoading] = useState(false);
@@ -327,13 +337,24 @@ export default function App() {
           }
 
           // Fail-fix grace: if this failed test is followed by a pass within 30 days, reduce penalty by 50%
+          // Delayed repair penalty: if it takes >30 days to fix, apply an additional penalty
           let failFixGrace = 1.0;
+          let delayedRepairPenalty = 0;
           if (index > 0) {
             const nextTest = tests[index - 1]; // chronologically later (more recent)
             if (nextTest && nextTest.testResult === 'PASSED') {
               const daysBetween = (new Date(nextTest.completedDate) - new Date(test.completedDate)) / (1000 * 60 * 60 * 24);
               if (daysBetween > 0 && daysBetween <= 30) {
                 failFixGrace = 0.5; // Reduce penalty if quickly resolved
+              } else if (daysBetween > 30) {
+                // Apply delayed repair penalty based on how long it took to fix
+                if (daysBetween <= 90) {
+                  delayedRepairPenalty = 8; // Minor delay (30-90 days)
+                } else if (daysBetween <= 365) {
+                  delayedRepairPenalty = 15; // Significant delay (3-12 months)
+                } else {
+                  delayedRepairPenalty = 20; // Extensive delay (1+ year)
+                }
               }
             }
           }
@@ -345,6 +366,18 @@ export default function App() {
             points: -defectPenalty,
             type: 'major_defect'
           });
+
+          // Apply delayed repair penalty if applicable
+          if (delayedRepairPenalty > 0) {
+            const daysBetween = (new Date(tests[index - 1].completedDate) - new Date(test.completedDate)) / (1000 * 60 * 60 * 24);
+            const delayLabel = daysBetween > 365 ? '1+ year' : daysBetween > 90 ? '3-12 months' : '30-90 days';
+            score -= delayedRepairPenalty;
+            penalties.push({
+              reason: `Delayed Major Repair (${delayLabel} to resolve): ${defect.text}`,
+              points: -delayedRepairPenalty,
+              type: 'delayed_repair'
+            });
+          }
         }
       });
     });
@@ -648,7 +681,7 @@ export default function App() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                 <div className="bg-slate-800/40 border border-slate-700/60 rounded-xl p-6">
-                  <h3 className="font-bold text-green-400 mb-4 flex items-center gap-2">
+                  <h3 className="font-bold text-green-400 mb-4 flex items-center justify-center gap-2">
                     <CheckCircle className="w-5 h-5" />
                     Detect Odometer Fraud
                   </h3>
@@ -656,7 +689,7 @@ export default function App() {
                 </div>
 
                 <div className="bg-slate-800/40 border border-slate-700/60 rounded-xl p-6">
-                  <h3 className="font-bold text-green-400 mb-4 flex items-center gap-2">
+                  <h3 className="font-bold text-green-400 mb-4 flex items-center justify-center gap-2">
                     <CheckCircle className="w-5 h-5" />
                     Uncover Hidden Repairs
                   </h3>
@@ -664,7 +697,7 @@ export default function App() {
                 </div>
 
                 <div className="bg-slate-800/40 border border-slate-700/60 rounded-xl p-6">
-                  <h3 className="font-bold text-green-400 mb-4 flex items-center gap-2">
+                  <h3 className="font-bold text-green-400 mb-4 flex items-center justify-center gap-2">
                     <CheckCircle className="w-5 h-5" />
                     Cloned Car Check
                   </h3>
@@ -672,7 +705,7 @@ export default function App() {
                 </div>
 
                 <div className="bg-slate-800/40 border border-slate-700/60 rounded-xl p-6">
-                  <h3 className="font-bold text-green-400 mb-4 flex items-center gap-2">
+                  <h3 className="font-bold text-green-400 mb-4 flex items-center justify-center gap-2">
                     <CheckCircle className="w-5 h-5" />
                     Know Before You Drive
                   </h3>
@@ -680,7 +713,7 @@ export default function App() {
                 </div>
 
                 <div className="bg-slate-800/40 border border-slate-700/60 rounded-xl p-6">
-                  <h3 className="font-bold text-green-400 mb-4 flex items-center gap-2">
+                  <h3 className="font-bold text-green-400 mb-4 flex items-center justify-center gap-2">
                     <CheckCircle className="w-5 h-5" />
                     Official MOT Records
                   </h3>
@@ -688,7 +721,7 @@ export default function App() {
                 </div>
 
                 <div className="bg-slate-800/40 border border-slate-700/60 rounded-xl p-6">
-                  <h3 className="font-bold text-green-400 mb-4 flex items-center gap-2">
+                  <h3 className="font-bold text-green-400 mb-4 flex items-center justify-center gap-2">
                     <CheckCircle className="w-5 h-5" />
                     Instant Grading (A–F)
                   </h3>
@@ -888,10 +921,14 @@ export default function App() {
                    if (nextTest) {
                      const currentTestDate = new Date(test.completedDate);
                      const previousTestDate = new Date(nextTest.completedDate);
-                     const gapInMs = currentTestDate - previousTestDate;
-                     const gapInMonths = gapInMs / (1000 * 60 * 60 * 24 * 30.44);
-                     if (gapInMonths > 14) {
-                       gapMessage = `Empty space detected: ${Math.round(gapInMonths)} months gap between tests (Declared SORN or kept off-road)`;
+                     // Calculate expected next test date (12 months after previous)
+                     const expectedNextDate = new Date(previousTestDate);
+                     expectedNextDate.setMonth(expectedNextDate.getMonth() + 12);
+                     // Calculate excess gap beyond the 12-month interval
+                     const excessGapInMs = currentTestDate - expectedNextDate;
+                     const excessGapInMonths = excessGapInMs / (1000 * 60 * 60 * 24 * 30.44);
+                     if (excessGapInMonths > 0.5) {
+                       gapMessage = `${Math.round(excessGapInMonths)} months SORN or kept off-road`;
                      }
                    }
 
@@ -902,7 +939,7 @@ export default function App() {
                         className="w-full flex items-center justify-between p-5 hover:bg-slate-900/40 transition-colors text-left"
                       >
                         <div>
-                          <p className="font-bold text-base text-white">{test.completedDate}</p>
+                          <p className="font-bold text-base text-white">{formatDate(test.completedDate)}</p>
                           <p className="text-sm text-slate-400 mt-0.5">{test.odometerValue ? `${parseInt(test.odometerValue, 10).toLocaleString()} ${test.odometerUnit}` : 'Odometer Not Stated'}</p>
                         </div>
                         <div className="flex items-center gap-4">
