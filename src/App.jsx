@@ -123,6 +123,16 @@ export default function App() {
     // Sort newest first
     const tests = [...data.motTests].sort((a, b) => new Date(b.completedDate) - new Date(a.completedDate));
 
+    // Debug: Log all tests immediately after sorting
+    console.log('DEBUG: All tests after sorting:');
+    tests.forEach((t, i) => {
+      console.log(`  [${i}] ${formatDate(t.completedDate)} - ${t.testResult} - ${t.defects.length} defects`);
+      const majors = t.defects.filter(d => d.type === 'MAJOR' || d.type === 'DANGEROUS');
+      if (majors.length > 0) {
+        console.log(`      Majors: ${majors.map(m => m.text.substring(0, 50)).join(', ')}`);
+      }
+    });
+
     let score = 100;
     const penalties = [];
     const timeline = [];
@@ -163,6 +173,7 @@ export default function App() {
 
     // Restrict active evaluation to the calculated lookback window
     const activeTests = tests.slice(0, lookbackWindowSize);
+    console.log(`DEBUG: firstCycleFailFix=${firstCycleFailFix}, lookbackWindowSize=${lookbackWindowSize}, activeTests count=${activeTests.length}`);
 
     // Mileage anomaly tracking
     let hasRollback = false;
