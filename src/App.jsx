@@ -469,6 +469,8 @@ export default function App() {
 
     // Debug logging
     console.log('=== SCORING DEBUG ===');
+    console.log('Total tests received:', tests.length);
+    console.log('Tests:', tests.map(t => `${formatDate(t.completedDate)} (${t.testResult}) - ${t.defects.length} defects`));
     console.log('Final score:', score);
     console.log('Total penalties:', penalties.length);
     console.log('Penalties breakdown:');
