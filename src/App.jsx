@@ -201,8 +201,8 @@ export default function App() {
              if (majorDefects.length > 0) {
                  timeline.push({
                    event: 'Resolved Maintenance Failure',
-                   date: nextTest.completedDate,
-                   description: `Failed on ${test.completedDate} with ${majorDefects.length} major/dangerous issues, but was repaired and retested within ${Math.round(daysBetween)} days.`,
+                   date: formatDate(nextTest.completedDate),
+                   description: `Failed on ${formatDate(test.completedDate)} with ${majorDefects.length} major/dangerous issues, but was repaired and retested within ${Math.round(daysBetween)} days.`,
                    type: 'repair'
                  });
              }
@@ -397,14 +397,20 @@ export default function App() {
       const olderTest = tests[i + 1];
       const newerDate = new Date(newerTest.completedDate);
       const olderDate = new Date(olderTest.completedDate);
-      const gapInMs = newerDate - olderDate;
-      const gapInMonths = gapInMs / (1000 * 60 * 60 * 24 * 30.44);
 
-      if (gapInMonths > 14) {
+      // Calculate expected next test date (12 months after older test)
+      const expectedNextDate = new Date(olderDate);
+      expectedNextDate.setMonth(expectedNextDate.getMonth() + 12);
+
+      // Calculate excess gap beyond the 12-month interval
+      const excessGapInMs = newerDate - expectedNextDate;
+      const excessGapInMonths = excessGapInMs / (1000 * 60 * 60 * 24 * 30.44);
+
+      if (excessGapInMonths > 0.5) {
         timeline.push({
           event: 'MOT Timeline Gap',
-          date: `${olderDate.getFullYear()} - ${newerDate.getFullYear()}`,
-          description: `An empty gap of ${Math.round(gapInMonths)} months was detected between these test dates. The car was likely off the road or declared SORN.`,
+          date: `${formatDate(olderDate)} to ${formatDate(newerDate)}`,
+          description: `${Math.round(excessGapInMonths)} months SORN or kept off-road (beyond the standard 12-month MOT interval).`,
           type: 'gap'
         });
       }
