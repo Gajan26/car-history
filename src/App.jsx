@@ -634,12 +634,19 @@ export default function App() {
       `}</style>
 
       <header className="bg-slate-900 border-b border-slate-800 py-10 px-4 shadow-xl">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl font-extrabold mb-2 flex items-center justify-center gap-2 tracking-tight text-white">
-            <Shield className="w-9 h-9 text-yellow-400 fill-yellow-400/20" />
-            Car Quality Check
-          </h1>
-          <p className="text-slate-400 mb-8 text-sm md:text-base">Official Vehicle MOT Analysis and History Check</p>
+        <div className="max-w-6xl mx-auto">
+          <div className="flex justify-between items-start mb-6">
+            <div />
+            <a href="https://forms.gle/LKN4CjzwWY1KW6Kf7" target="_blank" rel="noopener noreferrer" className="text-yellow-400 hover:text-yellow-300 text-sm font-semibold underline transition-colors">
+              Provide Feedback
+            </a>
+          </div>
+          <div className="text-center">
+            <h1 className="text-4xl font-extrabold mb-2 flex items-center justify-center gap-2 tracking-tight text-white">
+              <Shield className="w-9 h-9 text-yellow-400 fill-yellow-400/20" />
+              Car Quality Check
+            </h1>
+            <p className="text-slate-400 mb-8 text-sm md:text-base">Official Vehicle MOT Analysis and History Check</p>
 
           <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-4 max-w-xl mx-auto items-center justify-center">
             <div className="relative flex items-center bg-[#FFD300] text-black font-bold text-xl rounded-xl shadow-lg overflow-hidden border-2 border-yellow-500 h-14 w-full md:w-80">
@@ -692,6 +699,7 @@ export default function App() {
               <AlertTriangle className="w-4 h-4"/> Sample data shown
             </div>
           )}
+          </div>
 
           {!analysis && (
             <div className="mt-12 max-w-4xl mx-auto">
