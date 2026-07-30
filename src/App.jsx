@@ -1016,6 +1016,16 @@ export default function App() {
           </div>
         </main>
       )}
+
+      {/* Floating footer banner linking to SpareScout */}
+      <a
+        href="https://www.sparescout.co.uk/"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-0 left-0 right-0 bg-yellow-400 text-slate-950 py-3 px-4 text-center font-bold hover:bg-yellow-300 transition-colors z-50"
+      >
+        Found a good car? Find affordable parts → SpareScout
+      </a>
     </div>
   );
 }
