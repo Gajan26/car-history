@@ -637,7 +637,7 @@ export default function App() {
         <div className="max-w-6xl mx-auto">
           <div className="flex justify-between items-start mb-6">
             <div />
-            <a href="https://forms.gle/LKN4CjzwWY1KW6Kf7" target="_blank" rel="noopener noreferrer" className="text-yellow-400 hover:text-yellow-300 text-sm font-semibold underline transition-colors">
+            <a href="https://tally.so/r/lbj6dN" target="_blank" rel="noopener noreferrer" className="text-yellow-400 hover:text-yellow-300 text-sm font-semibold underline transition-colors">
               Provide Feedback
             </a>
           </div>
