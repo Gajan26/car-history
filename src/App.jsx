@@ -1036,7 +1036,7 @@ export default function App() {
         rel="noopener noreferrer"
         className="fixed bottom-0 left-0 right-0 bg-yellow-400 text-slate-950 py-3 px-4 text-center font-bold hover:bg-yellow-300 transition-colors z-50"
       >
-        Found a good car? Find affordable parts → SpareScout
+        Looking for car parts? → Try SpareScout
       </a>
     </div>
   );
