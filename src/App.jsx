@@ -392,13 +392,13 @@ export default function App() {
       });
     });
 
-    // Penalty for multiple failures in lookback window: if 2+ failures, apply -8 point penalty
-    // This signals unreliability even if repairs are quick
-    const failureCount = activeTests.filter(t => t.testResult === 'FAILED').length;
+    // Penalty for multiple failures: if 2+ failures across ALL history, apply -8 point penalty
+    // This signals unreliability pattern even if fixes are quick
+    const failureCount = tests.filter(t => t.testResult === 'FAILED').length;
     if (failureCount >= 2) {
       score -= 8;
       penalties.push({
-        reason: `Multiple Failures (${failureCount} failures in recent history): Indicates reliability concerns despite quick repairs`,
+        reason: `Multiple Failures (${failureCount} failures in vehicle history): Indicates reliability concerns despite quick repairs`,
         points: -8,
         type: 'multiple_failures'
       });
