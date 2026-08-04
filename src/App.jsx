@@ -346,7 +346,7 @@ export default function App() {
             basePenalty = 2;
           }
 
-          // Fail-fix grace: if this failed test is followed by a pass within 30 days, reduce penalty by 50%
+          // Fail-fix grace: if this failed test is followed by a pass within 30 days, reduce penalty by 33%
           // Delayed repair penalty: if it takes >30 days to fix, apply an additional penalty
           let failFixGrace = 1.0;
           let delayedRepairPenalty = 0;
@@ -355,7 +355,7 @@ export default function App() {
             if (nextTest && nextTest.testResult === 'PASSED') {
               const daysBetween = (new Date(nextTest.completedDate) - new Date(test.completedDate)) / (1000 * 60 * 60 * 24);
               if (daysBetween > 0 && daysBetween <= 30) {
-                failFixGrace = 0.5; // Reduce penalty if quickly resolved
+                failFixGrace = 0.67; // Reduce penalty if quickly resolved (33% reduction)
               } else if (daysBetween > 30) {
                 // Apply delayed repair penalty based on how long it took to fix
                 if (daysBetween <= 90) {
@@ -391,6 +391,18 @@ export default function App() {
         }
       });
     });
+
+    // Penalty for multiple failures in lookback window: if 2+ failures, apply -8 point penalty
+    // This signals unreliability even if repairs are quick
+    const failureCount = activeTests.filter(t => t.testResult === 'FAILED').length;
+    if (failureCount >= 2) {
+      score -= 8;
+      penalties.push({
+        reason: `Multiple Failures (${failureCount} failures in recent history): Indicates reliability concerns despite quick repairs`,
+        points: -8,
+        type: 'multiple_failures'
+      });
+    }
 
     for (let i = 0; i < tests.length - 1; i++) {
       const newerTest = tests[i];
