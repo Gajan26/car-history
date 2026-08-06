@@ -773,20 +773,48 @@ export default function App() {
       </header>
 
       {analysis && !error && (
-        <main className="max-w-6xl mx-auto mt-10 px-4 grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <main className="max-w-6xl mx-auto mt-10 px-4">
 
-          <div className="space-y-8 lg:col-span-1">
-
-            <div className={`rounded-2xl p-8 text-center border shadow-xl transition-all ${getGradeColors(analysis.grade)}`}>
-              <h2 className="text-xs font-bold uppercase tracking-widest text-slate-100 mb-2">Diagnostic Grade</h2>
-              <div className="text-8xl font-black mb-1">{analysis.grade}</div>
-
-              <div className="inline-block mt-1 mb-4 px-3 py-1 bg-slate-950/60 border border-slate-800/40 text-slate-300 font-mono text-xs rounded-full">
-                Calculated Index Score: <span className="text-yellow-400 font-bold">{analysis.score}</span> / 100
+          {analysis.grade === 'N/A' ? (
+            <div className="max-w-2xl mx-auto mt-8">
+              <div className="rounded-2xl p-8 text-center bg-slate-900/60 border border-slate-800 shadow-xl">
+                <h2 className="text-2xl font-bold mb-3 text-slate-100">No MOT History Available</h2>
+                <p className="text-base text-slate-300 mb-4">{analysis.summary}</p>
+                <p className="text-sm text-slate-400 leading-relaxed">
+                  In the UK, new cars need their first MOT test on the third anniversary of their first registration date. Once this car has completed its first MOT test, you'll be able to see its maintenance history here.
+                </p>
               </div>
 
-              <p className="text-sm text-slate-200 leading-relaxed font-medium">{analysis.summary}</p>
+              {analysis.vehicle && (
+                <div className="mt-8 bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow-lg">
+                  <h3 className="font-bold text-base mb-4 flex items-center gap-2 border-b border-slate-800 pb-3 text-white">
+                    <Info className="w-4 h-4 text-slate-400" /> Technical Registration Data
+                  </h3>
+                  <ul className="space-y-3.5 text-sm">
+                    <li className="flex justify-between"><span className="text-slate-400">Registration</span> <span className="font-semibold text-white tracking-wide">{analysis.vehicle.registration || 'Unknown'}</span></li>
+                    <li className="flex justify-between"><span className="text-slate-400">Make</span> <span className="font-semibold text-white">{analysis.vehicle.make || 'Unknown'}</span></li>
+                    <li className="flex justify-between"><span className="text-slate-400">Model</span> <span className="font-semibold text-white">{analysis.vehicle.model || 'Unknown'}</span></li>
+                    <li className="flex justify-between"><span className="text-slate-400">First Registered</span> <span className="font-semibold text-white">{analysis.vehicle.firstUsedDate || 'Unknown'}</span></li>
+                    <li className="flex justify-between"><span className="text-slate-400">Colour Specification</span> <span className="font-semibold text-white">{analysis.vehicle.primaryColour || 'Unknown'}</span></li>
+                  </ul>
+                </div>
+              )}
             </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+              <div className="space-y-8 lg:col-span-1">
+
+                <div className={`rounded-2xl p-8 text-center border shadow-xl transition-all ${getGradeColors(analysis.grade)}`}>
+                  <h2 className="text-xs font-bold uppercase tracking-widest text-slate-100 mb-2">Diagnostic Grade</h2>
+                  <div className="text-8xl font-black mb-1">{analysis.grade}</div>
+
+                  <div className="inline-block mt-1 mb-4 px-3 py-1 bg-slate-950/60 border border-slate-800/40 text-slate-300 font-mono text-xs rounded-full">
+                    Calculated Index Score: <span className="text-yellow-400 font-bold">{analysis.score}</span> / 100
+                  </div>
+
+                  <p className="text-sm text-slate-200 leading-relaxed font-medium">{analysis.summary}</p>
+                </div>
 
             <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow-lg">
               <h3 className="font-bold text-base mb-4 flex items-center gap-2 border-b border-slate-800 pb-3 text-white">
@@ -1026,6 +1054,8 @@ export default function App() {
             </div>
 
           </div>
+            </div>
+          )}
         </main>
       )}
 
